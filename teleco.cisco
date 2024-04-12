@@ -1,0 +1,75 @@
+
+!Configuración Switch 
+ !Archivo de configuración BASE
+ !Disable DNS lookup
+ no ip domain lookup 
+ !
+
+ !Swich name    
+ hostname Santi
+ 
+ ! Domain name  ccna-lab.com
+ ip domain-name ccna-lab.com
+
+ !Encrypted privileged EXEC password ciscoenpass
+ enable secret ciscoenpass
+
+ !Console access password   ciscoconpass
+ line console 0
+ password poli123
+
+ !Set the minimum length for passwords  10 characters   2 points
+ security passwords min-length 10
+
+ !Create an administrative user in the local
+ username poli secret poli123
+ username wjaimesf privilege 15 secret 5 $1$F3ku$b9XLXSznzVPjJY7c948ot/
+ !key 
+ Santi.ccna-lab.com
+ !bits
+ 1024
+ !interface
+ Santi(config)#
+ Santi(config)#interface vlan 1
+ Santi(config-if)#description Switch Subnet A
+ Santi(config-if)#ip address 192.168.10.2 255.255.255.128
+ Santi(config-if)#ipv6 address FE80::2 link-local
+ Santi(config-if)#ipv6 address 2001:db8:acad:a::2/64
+ Santi(config-if)#no shutdown
+ Santi(config-if)#exit
+ !ip default 
+ 192.168.10.1
+
+!Configuracion Router 
+ !Archivo de configuración BASE
+ !Disable DNS lookup
+ no ip domain lookup 
+ !
+
+ !Router name   
+ hostname JUAN
+ 
+ ! Domain name  ccna-lab.com
+ ip domain-name ccna-lab.com
+
+ !Encrypted privileged EXEC password ciscoenpass
+ enable secret ciscoenpass
+
+ !Console access password   ciscoconpass
+ line console 0
+ password Poli123*
+
+ !Set the minimum length for passwords  10 characters   2 points
+ security passwords min-length 10
+
+ !Create an administrative user in the local
+ username poli secret poli
+ 
+ !key 
+ JUAN.ccna-lab.com
+ !bits
+ 1024
+ !Interfaces
+ interface g0/0
+ interface g0/1
+

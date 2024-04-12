@@ -1,0 +1,98 @@
+!!Asigne un nombre de dispositivo al switch.
+switch(config)# hostname S1
+
+!!Inhabilite la búsqueda DNS para evitar que el router intente traducir los comandos mal introducidos como si fueran nombres de host.
+
+S1(config)# no ip domain-lookup
+
+!!Asigne class como la contraseña cifrada del modo EXEC privilegiado.
+
+S1(config)# enable secret class
+
+!!Asigne cisco como la contraseña de la consola y habilite el inicio de sesión.
+
+S1(config)# line console 0
+S1(config-line)# password cisco
+S1(config-line)# login
+
+!!Asigne cisco como la contraseña de vty y habilite el inicio de sesión.
+
+S1 (config) # línea vty 0 4
+S1(config-line)# password cisco
+S1(config-line)# login
+
+!!Cifre las contraseñas de texto sin formato.
+
+S1(config)# service password-encryption
+
+!!Cree un aviso que advierta a todo el que acceda al dispositivo que el acceso no autorizado está prohibido.
+
+S1(config)# banner motd $ Authorized Users Only! $
+S1(config)# exit
+
+!! Ajuste el reloj en el interruptor.
+
+S1# clock set 15:30:00 27 Aug 2019
+
+!! Guardar la configuración en ejecución en la configuración de arranque
+
+S1# copy running-config startup-config
+
+!!
+
+S1(config)# vlan 10
+S1(config-vlan)# name Management
+S1(config-vlan)# vlan 20
+S1(config-vlan)# name Sales
+S1(config-vlan)# vlan 30
+S1 (config-vlan) # name Operations
+S1(config-vlan)# vlan 999
+S1(config-vlan)# name Parking_Lot
+S1 (config-vlan) # vlan 1000
+S1(config-vlan)# name Native
+S1(config-vlan)# exit
+
+!! Configure la interfaz de administración y el gateway predeterminado en cada switch con la información de dirección IP incluida en la tabla de direccionamiento.
+
+S1(config)# interface vlan 10
+S1(config-if)# ip address 192.168.10.11 255.255.255.0
+S1(config-if)# no shutdown
+S1(config-if)# exit
+S1(config)# ip default-gateway 192.168.10.1
+
+!! Asigne todos los puertos no utilizados del switch a la VLAN de Parking_Lot, configúrelos para el modo de acceso estático y desactívalos administrativamente.
+
+
+S1(config)# interface range f0/2 - 4 , f0/7 - 24 , g0/1 - 2
+S1(config-if-range)# switchport mode access
+S1(config-if-range)# switchport access vlan 999
+S1(config-if-range)# shutdown
+
+!! Asigne los puertos usados a la VLAN apropiada (especificada en la tabla VLAN anterior) y configúrelos para el modo de acceso estático.
+
+S1(config)# interface f0/6
+S1(config-if)# switchport mode access
+S1(config-if)# switchport access vlan 20
+
+!!Verifique que las VLAN estén asignadas a las interfaces correctas.
+
+S1# show vlan brief
+!!
+
+S1(config)# interface f0/1
+S1(config-if)# switchport mode trunk
+
+
+!! Establezca la VLAN nativa en 1000 en ambos switches.
+
+S1(config-if)# switchport trunk native vlan 1000
+
+!! Especifique que las VLAN 10, 20, 30 y 1000 pueden cruzar el troncal.
+
+S1(config-if)# switchport trunk allowed vlan 10,20,30,1000
+
+!! Verifique los puertos de enlace troncal, la VLAN nativa y las VLAN permitidas en el troncal.
+
+S1# show interfaces trunk
+
+S1# copy running-config startup-config

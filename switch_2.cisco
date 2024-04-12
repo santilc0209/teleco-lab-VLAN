@@ -1,0 +1,79 @@
+!!Asigne un nombre de dispositivo al switch.
+
+switch(config)# hostname S2
+!! Inhabilite la búsqueda DNS para evitar que el router intente traducir los comandos mal introducidos como si fueran nombres de host.
+
+S2(config)# no ip domain-lookup
+!! Asigne class como la contraseña cifrada del modo EXEC privilegiado.
+
+S2(config)# enable secret class
+!! Asigne cisco como la contraseña de la consola y habilite el inicio de sesión.
+
+S2(config)# line console 0
+S2(config-line)# password cisco
+S2(config-line)# login
+!! Asigne cisco como la contraseña de vty y habilite el inicio de sesión.
+
+S2 (config) # línea vty 0 4
+S2(config-line)# password cisco
+S2(config-line)# login
+!! Cifre las contraseñas de texto sin formato.
+
+
+S2(config)# service password-encryption
+!! Cree un aviso que advierta a todo el que acceda al dispositivo que el acceso no autorizado está prohibido.
+
+
+
+S2(config)# banner motd $ Authorized Users Only! $
+S2(config)# exit
+!! Ajuste el reloj en el interruptor.
+
+S2# clock set 15:30:00 27 Aug 2019
+!!Guardar la configuración en ejecución en la configuración de arranque
+
+
+S2# copy running-config startup-config
+
+!!
+S2(config)# vlan 10
+S2(config-vlan)# name Management
+S2(config-vlan)# vlan 20
+S2(config-vlan)# name Sales
+S2(config-vlan)# vlan 30
+S2 (config-vlan) # name Operations
+S2(config-vlan)# vlan 999
+S2(config-vlan)# name Parking_Lot
+S2 (config-vlan) # vlan 1000
+S2(config-vlan)# name Native
+S2(config-vlan)# exit
+
+!!
+S2(config)# interface vlan 10
+S2(config-if)# ip address 192.168.10.12 255.255.255.0
+S2(config-if)# no shutdown
+S2(config-if)# exit
+S2(config)# ip default-gateway 192.168.10.1
+!!
+
+S2 (config) # rinterface range f0/2 - 17, f0/19 - 24, g0/1 - 2
+S2(config-if-range)# switchport mode access
+S2(config-if-range)# switchport access vlan 999
+S2(config-if-range)# shutdown
+!!
+S2(config)# interface f0/18
+S2(config-if)# switchport mode access
+S2(config-if)# switchport access vlan 30
+
+!!
+S2(config)# interface f0/1
+S2(config-if)# switchport mode trunk
+
+S2(config-if)# switchport trunk native vlan 1000
+
+S2(config-if)# switchport trunk allowed vlan 10,20,30,1000
+
+S2# show interfaces trunk
+
+S2# copy running-config startup-config
+
